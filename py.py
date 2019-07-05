@@ -560,5 +560,5 @@ async def on_message(message):
         await client.send_message(message.channel, embed=discord.Embed(description="\n".join(list)))
 
 
-
-client.run("NTI0MzY5NzAxMTQ1NjczNzI4.DvnE8Q.71jd00SVTZe61apUNy9ghicoRyo")
+access_token = os.environ["BOT_TOKEN"]
+client.run(access_token)
