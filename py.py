@@ -51,7 +51,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if message.content.startswith("!채팅청소") or message.content.startswith("!청소") or message.content.startswith("!챗청") and not message.content.startswith("!버킷 청소"): #and not는 버킷청소을 했는때 !청소 명령어가 작동되지 않게 막은거
+    arg = message.content.split(" ")[0]
+    cmd = ["!채팅청소", "!청소", "!챗청"] # "!버킷 청소" 제외
+    cmdIgnores = ["!사진찾기", "!사진검색", "!날씨", "!버킷 청소"]
+    
+    if arg not in cmdIgnores:
         print("--------------------")
         print("청소")
         print("--------------------")
@@ -67,28 +71,13 @@ async def on_message(message):
         print(message.author.server)
         print("--------------------")
         print(" ")
+        
+    if arg in cmd:
         tmp = await client.send_message(message.channel, "청소시작....")
         async for msg in client.logs_from(message.channel):
             await client.delete_message(msg)
 
-    if message.content.startswith("!명령어"):
-        print("--------------------")
-        print("명령어")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-
-        print("--------------------")
-        print(" ")
-        channel = message.channel
+    elif arg == "!명령어":
         embed = discord.Embed(
             title = "퐈퐈봇 명령어",
             description ="퐈퐈봇 명령어입니다.",
@@ -115,26 +104,10 @@ async def on_message(message):
         embed.add_field(name="!소리 <수치>  <+ / ->", value="불륨을 조절합니다.", inline=False)
         embed.add_field(name="!곡설명", value="재생목록을 확입합니다.", inline=False)
 
-        await client.send_message(channel, embed=embed)
+        await message.channel.send(embed=embed)
+        await message.channel.send("업대이트내용은 : https://discord.gg/6Rxcwwb 에서확인해세요!")
 
-        await client.send_message(message.channel, "업대이트내용은 : https://discord.gg/6Rxcwwb 에서확인해세요!")
-
-    if message.content.startswith("!제작자"):
-        print("--------------------")
-        print("제작자")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!제작자":
         file = openpyxl.load_workbook("퐘퐘제작자.xlsx")
         sheet = file.active
         memory = message.content.split(" ")
@@ -142,67 +115,22 @@ async def on_message(message):
             await client.send_message(message.channel, sheet["A" + str(i)].value)
             break
 
-    if message.content.startswith("!모두모여"):
-        print("--------------------")
-        print("모두모여")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!모두모여":
         await client.send_message(message.channel, "@everyon")
 
-    if message.content.startswith("!들어와"):
+    elif arg == "!들어와":
         channel = message.author.voice.voice_channel
         server = message.server
         voice_client = client.voice_client_in(server)
-        print("--------------------")
-        print("음악봇 입장")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
         if voice_client == None:
             await client.send_message(message.channel, "들어왔습니다")  # 호오.... 나를 부르는건가? 네녀석.. 각오는 되있겠지?
             await client.join_voice_channel(channel)
         else:
             await client.send_message(message.channel, "봇이 이미 들어와있습니다.")  # 응 이미 들어와있어 응쓰게싸
 
-    if message.content.startswith("!나가"):
+    elif arg == "!나가":
         server = message.server
         voice_client = client.voice_client_in(server)
-        print("--------------------")
-        print("음악봇 출구")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
         if voice_client == None:
             await client.send_message(message.channel, "봇이 음성채널에 접속하지 않았습니다.")  # 원래나가있었음 바보녀석 니녀석의 죄는 "어리석음" 이라는 .것.이.다.
             pass
@@ -210,20 +138,7 @@ async def on_message(message):
             await client.send_message(message.channel, "나갑니다")  # 나가드림
             await voice_client.disconnect()
 
-    if message.content.startswith("!재생"):
-        print("--------------------")
-        print("음악재생")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
+    elif arg == "!재생":
         server = message.server
         voice_client = client.voice_client_in(server)
         msg1 = message.content.split(" ")
@@ -232,84 +147,23 @@ async def on_message(message):
         players[server.id] = player
         await client.send_message(message.channel, embed=discord.Embed(description="노래을 재생합니다."))
         player.start()
-        print(" ")
-        print("--------------------")
-        print(" ")
 
-    if message.content.startswith("!일시정지"):
-        print("--------------------")
-        print("일시정지")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!일시정지":
         id = message.server.id
         await client.send_message(message.channel, embed=discord.Embed(description="노래을 일시정지을하였습니다, 다시재생은 !다시재생"))
         players[id].pause()
 
-    if message.content.startswith("!다시재생"):
-        print("다시재생")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!다시재생":
         id = message.server.id
         await client.send_message(message.channel, embed=discord.Embed(description="다시재생을합니다."))
         players[id].resume()
 
-    if message.content.startswith("!멈춰"):
-        print("--------------------")
-        print("노래리셋(멈춰)")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!멈춰":
         id = message.server.id
         await client.send_message(message.channel, embed=discord.Embed(description="노래가 리셋되었습니다 새로운 음악은 !재생[유튜브링크]"))
         players[id].stop()
 
-    if message.content.startswith("!사진찾기") or message.content.startswith("!사진검색"):
-        print("--------------------")
-        print("사진찾기")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
+    elif arg == "!사진찾기" or arg == "!사진검색":
         Text = ""
         learn = message.content.split(" ")
         vrsize = len(learn)  # 배열크기
@@ -345,22 +199,7 @@ async def on_message(message):
         print("--------------------")
         print(" ")
 
-    if message.content.startswith("!봇이종료되었어요"):
-        print("--------------------")
-        print("봇이종료되었어요")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!봇이종료되었어요":
         channel = message.channel
         embed = discord.Embed(
             colour=discord.Colour.green()
@@ -371,29 +210,14 @@ async def on_message(message):
 
         await client.send_message(channel, embed=embed)
 
-    if message.content.startswith("!투표"):
-        print("--------------------")
-        print("투표")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!투표":
         vote = message.content[4:].split("/")
         await client.send_message(message.channel, "❗투표주제 - " + vote[0])
         for i in range(1, len(vote)):
             choose = await client.send_message(message.channel, "```" + vote[i] + "```")
             await client.add_reaction(choose, "☮")
 
-    if message.content.startswith("!날씨"):
+    elif arg == "!날씨":
         print("--------------------")
         print("날씨")
         print("--------------------")
@@ -498,28 +322,9 @@ async def on_message(message):
 
         await client.send_message(message.channel, embed=embed)
 
-    if message.content.startswith("!버킷 청소"):
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
-        print(" ")
+    elif arg == "!버킷 청소"):
+        for index in range(21):
+            print(" ")
         print("---------------사용기록---------------")
         print(" ")
         print("--------------------")
@@ -538,22 +343,7 @@ async def on_message(message):
         print("--------------------")
         print(" ")
 
-    if message.content.startswith("!서버"):
-        print("--------------------")
-        print("서버 검색")
-        print("--------------------")
-        print(message.author.id)
-        print("--------------------")
-        print(" ∧ 사용한 사람의 id")
-        print(" ∨사용한 사람의 name")
-        print("--------------------")
-        print(message.author.name)
-        print("--------------------")
-        print(" ∨사용한 서버")
-        print("--------------------")
-        print(message.author.server)
-        print("--------------------")
-        print(" ")
+    elif arg == "!서버"):
         list = []
         for server in client.servers:
             list.append(server.name)
